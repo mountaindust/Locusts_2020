@@ -1,0 +1,14 @@
+# Compiled Python
+# MATLAB generated files
+# Sobol data
+*.asv
+*.mat
+*.m~
+.Rproj.user
+.git/objects/pack/pack-531a648df6826692d0a39a686d7c6bf1daba63e3.pack
+.vscode/
+ABM_in_R/simulations
+ABM_in_R/figures
+Sobol/results
+__pycache__/
+*.h5

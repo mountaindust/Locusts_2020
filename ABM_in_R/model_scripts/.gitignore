@@ -1,0 +1,5 @@
+# Ignore all simulation data
+/simulations
+
+# Ignore Rhistory
+.Rhistory

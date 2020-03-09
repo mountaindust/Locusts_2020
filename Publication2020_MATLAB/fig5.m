@@ -50,14 +50,14 @@ nt = 4*3000;  %time steps % MUST BE a multiple of 3
 
 %%% Computational grid
 dx = L/nx;  %spatial discritization
-dt = dx/v  %time step -- chosen to for convenience
+dt = dx/v;  %time step -- chosen to for convenience
 
 X = (1:nx)*dx;
 
 %%% Report Info
-tfinal = nt*dt
+tfinal = nt*dt;
 
-sprSpeed = v*alpha/(alpha+beta)
+sprSpeed = v*alpha/(alpha+beta);
 % 0.004
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,34 +79,56 @@ if new_data
 
     [Rspr, Sspr, Mspr, rhomaxSpr] = fxn_locustRK(L,nx,nt,N,Rplus,v,lambda,alpha,beta,eta,theta,gamma,delta,video_flag);
     
-    fig5outs = cell(2,5); % 2 x 5 cell with first row from pulse, second row from spread.
-    fig5outs{1,1} = R;
-    fig5outs{1,2} = S;
-    fig5outs{1,3} = M;
-    fig5outs{1,4} = rhomax;
-    fig5outs{1,5} = c;
+    % prepare data for saving
+    fig5outs = cell(1,5); % 1 x 5 cell with first row from pulse, second row from spread.
     
-    fig5outs{2,1} = Rspr;
-    fig5outs{2,2} = Sspr;
-    fig5outs{2,3} = Mspr;
-    fig5outs{2,4} = rhomaxSpr;
-%     fig5outs{2,5} = c;
+    rho = S + M;
+    rhospr = Sspr + Mspr;
     
+    % tick positions
+    tSixth = nt/6;
+    tmid = nt/2;
+    %
+    tick1 = tSixth;
+    tick2 = tmid;
+    tick3 = nt;
+    
+    rhoS = [ rho(:,1) rho(:,tick1), rho(:,tick2) rho(:,tick3)];
+    rhoS = rhoS(1:nx,:);
+    
+    rhoSspr = [ rhospr(:,1) rhospr(:,tick1), rhospr(:,tick2) rhospr(:,tick3)];
+    rhoSspr = rhoSspr(1:nx,:);
+    
+    fig5outs{1} = rhoS;
+    fig5outs{2} = rhoSspr;
+    
+    %%%
+    lthresh=20;
+    SM = rho;
+    SM(find(SM<=lthresh))=0;
+    SM(find(SM>lthresh))=1;
+    SMspr = rhospr;
+    SMspr(find(SMspr<=lthresh))=0;
+    SMspr(find(SMspr>lthresh))=1;
+
+    laser = fliplr(SM+SMspr)';
+    fig5outs{3} = laser;
+    
+    %%%
+    fig5outs{4} = rhomax;
+    fig5outs{5} = rhomaxSpr;
+
     save(['data/' filename], 'fig5outs')
 else
     load(['data/' filename])
     
-    R = fig5outs{1,1};
-    S = fig5outs{1,2};
-    M = fig5outs{1,3};
-    rhomax = fig5outs{1,4};
-    c = fig5outs{1,5};
     
-    Rspr = fig5outs{2,1};
-    Sspr = fig5outs{2,2};
-    Mspr = fig5outs{2,3};
-    rhomaxSpr = fig5outs{2,4};
-    
+    rhoS = fig5outs{1};
+    rhoSspr = fig5outs{2};
+    laser = fig5outs{3};
+    rhomax = fig5outs{4};
+    rhomaxSpr = fig5outs{5};
+      
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Plotting %%%
@@ -161,14 +183,14 @@ pos = get(h2, 'Position'); % [0.1300    0.5838    0.3347    0.3412] from full fi
 set(h2,'Position', [pos(1),1.05*pos(2), 1.2*width, width/4])
 %set(gcf,'Position',[100 100 scrsz(3) .25*scrsz(3)])
 
-p = plot(   X, S(1:nx,tick1)+M(1:nx,tick1),...
-            X, S(1:nx,tick2)+M(1:nx,tick2),...
-            X, S(1:nx,tick3)+M(1:nx,tick3),...
-            X, Sspr(1:nx,1)+Mspr(1:nx,1),...
-            X, Sspr(1:nx,tick1)+Mspr(1:nx,tick1),...
-            X, Sspr(1:nx,tick2)+Mspr(1:nx,tick2),...
-            X, Sspr(1:nx,tick3)+Mspr(1:nx,tick3),...
-            X, S(1:nx,1)+M(1:nx,1)...
+p = plot(   X, rhoS(:,2),...
+            X, rhoS(:,3),...
+            X, rhoS(:,4),...
+            X, rhoSspr(:,1),...
+            X, rhoSspr(:,2),...
+            X, rhoSspr(:,3),...
+            X, rhoSspr(:,4),...
+            X, rhoS(:,1)...
         );
 
     axis([X(1) X(end) 0 1500])
@@ -241,14 +263,7 @@ set(h3,'Position', [pos(1),pos(2), .45*width, width/4])
 %set(gcf,'Position', [100 100 .45*scrsz(3) .25*scrsz(3)])%[100 100 .45*scrsz(3) .12*scrsz(3)])
 
     lthresh=20;
-    SM = S+M;
-    SM(find(SM<=lthresh))=0;
-    SM(find(SM>lthresh))=1;
-    SMspr = Sspr+Mspr;
-    SMspr(find(SMspr<=lthresh))=0;
-    SMspr(find(SMspr>lthresh))=1;
-
-    imagesc(fliplr(SM+SMspr)')
+    imagesc(laser)
     colormap(map)
     xl=xlim;
     xlim=([0,xl(2)]);
@@ -293,7 +308,7 @@ g = plot(   1:nt, rhomax,...
     g(2).LineWidth = LWbig;
     g(1).LineStyle = LSrd;
     g(2).LineStyle = LSri;
-    uistack(h(1),'top');
+    uistack(g(1),'top');
     ax = gca;
     ax.XLim = [0 nt];
     ax.YLim = [0 1500];

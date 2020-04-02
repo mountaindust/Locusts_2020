@@ -3,6 +3,8 @@
 This repo contains codes used in creating the work of
 - A J Bernoff, M Culshaw-Maurer, R A Everett, M E Hohn, W C Strickland, J Weinburd. *Agent-based and continuous models of hopper bands for the Australian plague locust: How resource consumption mediates pulse formation and geometry*. [(Preprint)](https://arxiv.org/abs/1910.14553)
 
+[![DOI](https://zenodo.org/badge/245011685.svg)](https://zenodo.org/badge/latestdoi/245011685)
+
 The repo contains one Matlab script and three directories:
 - `video_ABM.m`
 - ABM_in_R

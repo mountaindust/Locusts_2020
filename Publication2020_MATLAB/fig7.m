@@ -345,7 +345,7 @@ for k = 1:n
         loglamsNew = -8:0.1:-4;
         
         % also load data from Snapshots (created in fig8.m)
-        load('data/cfShape_snap_9:27.mat')
+        load('data/cfShape_snap_9by27.mat')
         % loads PDE_snap, ABM_snap, peaks_snap, widths_snap, skews_snap
 %         S = PDE_snap{1,k};
 %         M = PDE_snap{2,k};

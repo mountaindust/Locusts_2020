@@ -204,7 +204,7 @@ if new_data == 1
     % compute skewness
     skews_snap(1,k) = -sum((X-cm).^3.*(rho)/N)*dx/(widths_snap(1,k))^3;
 else
-    load('data/cfShape_snap_9:27.mat')
+    load('data/cfShape_snap_9by27.mat')
     % loads PDE_snap, ABM_snap, peaks_snap, widths_snap, skews_snap
     S = PDE_snap{1,k};
     M = PDE_snap{2,k};
